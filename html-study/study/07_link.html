@@ -27,5 +27,27 @@
              width="80px"
              >
         </a>
+        <!-- a태그의 href속성에 # 태그의 id를 기입하면 
+        해당 id를 가진 태그로 순간이동 
+        -->
+        <a href="#target-50">50으로 이동</a>
+        <p id="container"></p>
+
 </body>
+<!-- script: 해당페이지에서 작동할 Js 작성부 -->
+<script>
+    // container id를 가진 p태그 찾고 변수에 담기
+    const container = document.getElementById("container");
+
+    for(let i = 1; i <= 100; i++) {
+        // p태그를 js로 생성
+        const p = document.createElement("p");
+        // p태그의 속성들 설정
+        p.id = `target-${i}`
+        p.textContent = `타켓 ${i}`
+
+        // 만든 p태그를 container 하위로 넣어준다
+        container.appendChild(p)
+    }
+</script>
 </html>
