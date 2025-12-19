@@ -1,0 +1,65 @@
+// 자바스크립트 원시타입 / 객체타입
+// stack, heap
+
+// 원시타입
+// 1. 숫자(number)
+const num1 = 10;
+const num2 = 10.111;
+console.log(typeof num1);
+console.log(typeof num2);
+
+// number 자료형의 독특한 값
+
+// infinity - 무한대
+const num3 = 100 / 0; 
+console.log(num3);
+console.log(typeof num3);
+
+// Nan(not a number)
+// 정의되지 않는 사직연산
+const num4 = "홍길동" / 3;
+console.log(num4);
+console.log(typeof num4);
+
+
+// 2.문자열(string)
+const name = "홍길동";
+console.log(typeof name);
+// `` 백틱으로 문자열에 변수를 대입할 수 있다.
+const hello = `안녕하세요 제 이름은 ${name}입니다`;
+console.log(hello);
+// 사용자가 input에 입력한 데이터 string!
+// <input type="number" /> -> js로 들고오면 string
+
+
+// 3. boolean - truthy / falsy(나중에)
+const isClicked = false;
+
+// 4. null: 존재하지 않으며 알 수 없는 값
+const a = null;
+console.log(typeof a); // object -> 버그
+// null 비교는 이러게 해줘야 한다
+console.log(a === null);
+
+
+// 5. undefined: 변수에 값이 할당되지 않은 상태
+let b; // 선언만 되고 초기화가 안되어있음
+console.log(typeof b);
+
+
+// 형변환 - 자동 / 명시
+let number1 = "15";
+let number2 = 5;
+
+// 문자열이 덧셈을 제외하고 사칙연산이 있을경우 
+// 숫자로 자동형변환
+// 이걸 응용하기보단 디버그할때 참고하자
+console.log(number1 * number2);
+console.log(number1 / number2);
+console.log(number1 - number2);
+console.log(number1 + number2); // 덧셈은 불가능
+
+// 덧셈은 명시적으로 형변환 해줘야 한다
+console.log(typeof number1); // string
+number1 = parseInt(number1);
+console.log(typeof number1);
