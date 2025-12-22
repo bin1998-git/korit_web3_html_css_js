@@ -1,7 +1,7 @@
 const id ="user1";
 const pw = "password123";
 
-// 1. id, pw 입력감지 -> 검증 -> 저장
+// id, pw 입력감지 -> 검증 -> 저장
 const submit = (cb) => {
     console.log("폼 제출");
     cb({
@@ -19,3 +19,9 @@ const validate = (data, cb) => {
 const save = (isValid, data) => {
     console.log(isValid ? `${data} 저장성공` : "검증 실패");
 }
+
+submit((data) => {
+    validate(data, (isValid, data) => {
+        save(isValid, data);
+    })
+});
