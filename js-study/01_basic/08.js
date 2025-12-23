@@ -60,3 +60,51 @@ console.log(people);
 // 나이순 정렬 내림차순
 people.sort((p1, p2) => { return p2.age - p1.age});
 console.log(people);
+
+
+// findIndex
+// IndexOf() -> 데이터가 정확히 일치해야 가져온다
+// 배열에 객체가 있고, 그 객체의 필드로 index 찾을떄
+const indexOfKim = people.findIndex((person) => person.name === "홍길동");
+console.log(indexOfKim); // 3
+
+// 누적합을 구해보자!
+// forEach 사용
+const nums = [2, 4, 7, 100, 200];
+let sum = 0;
+
+nums.forEach((n) => sum += n);
+console.log(sum);
+
+// reduce(fx, 누적변수의 초기값)
+// fx: (누적변수, 배열에서 꺼내온 요소) => {}
+sum = nums.reduce((sum, number) => {
+    console.log(`현재 누적값: ${sum}`)
+    console.log(`${sum} + ${number} 연산실행!`)
+    return sum + number; // sum = sum + numbers
+}, 0)
+console.log(`최종합: ${sum}`);
+
+// 왜 쓰느냐?
+// 서버에서 가져온 데이터([객체,객체..])를 보기좋게 가공할 때
+const orders = [
+    {order_id: 1, status: "PAID", price: 10000},
+    {order_id: 2, status: "CANCEL", price: 5000},
+    {order_id: 3, status: "PAID", price: 7000}
+]
+/*
+    {
+        PAID : 17000,
+        CANCEL: 5000
+    }
+*/
+
+const sumByStatus = orders.reduce((result, order) => {
+    // 처음에는 값에 아무값도 안들어있음
+    // 최초에는 필드가 없기때문에  
+    // result[order.status] === undifined
+    result[order.status] = (result[order.status] ?? 0) + order.price;
+    return result;
+}, {}); // result의 초기값은 빈객체{}
+
+console.log(sumByStatus);

@@ -37,7 +37,7 @@ for(let i = 0; i < nums.length; i++) {
     console.log(nums[i]);
     // nums[0], ....  nums[2]
 }
-
+$
 // 향상for문
 for (let n of nums) {
     // nums에 있는거 하나씩 n이라는 변수에 담아서
