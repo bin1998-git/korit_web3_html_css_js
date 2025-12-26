@@ -38,6 +38,7 @@ promise1
 
 const a = (value) => {
     console.log("a 호출!");
+    // new promise()로 promise 객체가 생성되는순간, 내부의 함수는 실행된다.
     const promiseA = new Promise((resolve) => {
         setTimeout(() => {
             resolve(value + 5);
@@ -65,6 +66,8 @@ const c = (value) => {
     });
     return promiseC;
 };
+
+
 
 
 // promise 객체 리턴

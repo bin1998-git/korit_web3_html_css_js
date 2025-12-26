@@ -13,8 +13,17 @@ console.log(3); // 위에서 아래로 1->2->3
 // 참고) cpu - 코어(일꾼갯수),
 // 쓰레드(하나의 일꾼이 동시에 할 수 있는 일의 갯수) - 작업단위
 
+
 console.log(1);
-setTimeout(() => {
+setTimeout(() => { // setTimeout -> webAPI 함수 중 하나
     console.log(2);
 }, 5000); // 몇초뒤에 해당 콜백함수를 실행시키세요
 console.log(3);
+
+// 자바스크립트는 싱글스레드 -> 한번에 하나의 작업만
+// 근데 어떻게 비동기(병렬)처리를 하느냐?
+// web API 특수한 함수를 사용하면, js 환경 밖으로 해당 함수를 외주
+// web API는 브라우저 or node.js라서 멀티스레드 -> 병렬 가능
+// web API는 처리 완료한 결과를 queue에 넣어준다.
+// event loop가 queue를 감시하다가 함수가 들어오면
+// js환경 안의 stack에 함수를 추가한다.
