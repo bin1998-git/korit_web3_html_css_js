@@ -72,38 +72,60 @@
         }
     });
 
-    // change 이벤트
-    // input에서 작성을 완료하고 Focus가 사라지는 순간 생성
-    emailInput.addEventListener("change", (e) => {
-        // @있는지 검사
-        const msg = document.querySelector("#email-msg");
-        const inputValue = e.target.value;
-        console.log(inputValue);
-        isValidEmail = inputValue.includes("@");
-        if(isValidEmail) {
-            msg.innerText = "사용가능한 이메일입니다";
-            msg.className = "success";
-        } else {
-            msg.innerText = "이메일 형식이 아닙니다"
-            msg.className = "error";
+    const inputRules = {
+        username: {
+            validate: (value) => value.length >= 4,
+            success: "사용가능한 아이디 입니다.",
+            error: "아이디는 4글자 이상이어야 합니다."
+        },
+        password: {
+            validate: (value) => value.length >= 6,
+            success: "사용가능한 페스워드 입니다.",
+            error: "페스워드는 6글자 이상이어야 합니다."
+        },
+        email: {
+            validate: (value) => value.includes("@"),
+            success: "사용가능한 이메일 입니다.",
+            error: "이메일 형식이 아닙니다."
         }
-    });
+    }
 
-    // 아이디 input을 검증
-    const usernameInput = document.querySelector("#username");
-    usernameInput.addEventListener("change",(e) => {
-        // 아이디는 4글자 이상인지 확인
-        const msg = document.querySelector("#username-msg");
-        const target = e.target;
-        const inputValue = target.value;
-        if(inputValue.length < 4) {
-            msg.innerText = "아이디는 4자 이상이어야 합니다";
-            msg.className = "error"
-        } else {
-            msg.innerText = "사용가능한 아이디 입니다.";
-            msg.className = "success";
+    for (let input of inputs) {
+        input.addEventListener("change", (e) => {
+            const target = e.target;
+            const { id, value } = target;
+            // ex) 첫반복 id = "username"
+            const rule = inputRules[id];
+            const {validate, success, error} = rule;
+            
+            const msgSpan = document.querySelector(`#${id}-msg`);
+            const isValid = validate(value);
+
+            msgSpan.innerText = isValid ? success : error;
+            msgSpan.className = isValid ? "success" : "error";
+        });
+    }
+
+    submitBtn.addEventListener("click", () => {
+        // 제출버튼 클릭시
+        // 3개의 input중 하나라도 error라면 
+        // -> span 태그중에 error 클래스가 가진애가 있다면
+        // alert("입력값을 확인하세요")
+        // 모두 success면 
+        // alert("회원가입 성공")
+        const errorMsg = document.querySelector(".error");
+
+        if(errorMsg) { 
+            // errorMsg가 truhy값으로 존재한다면
+            // -> 하나라도 error클래스가 있다면
+            alert("입력값을 확인하세요!");
+            // error 클래스를 가진 태그 이전 형제태그
+            errorMsg.previousElementSibling.focus();
+            return
         }
-    })
+        alert("회원가입 성공!")
+        
+    });
 
 </script>
 </html>

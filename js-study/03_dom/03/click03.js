@@ -5,8 +5,8 @@ const answer = 7;
     // 부모인 board가 cell로부터 이벤트를 전달받아서 작동
     board.addEventListener("click", (event) => {
         const target = event.target;
-        const id = target.id;
-        let number = target.innerText;
+        const id = target.id; 
+        let number = target.innerText; 
         number = parseInt(number);
         // number = Number(number);
 

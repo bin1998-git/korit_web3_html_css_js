@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>상품목록</h1>
+    <ul class="product-list"></ul>
+
+    <h2>장바구니</h2>
+    <button class="save-btn">주문 저장</button>
+    <button class="load-btn">주문 불러오기</button>
+    <ul class="cart-list"></ul>
+</body>
+<script>
+    const products = [
+        {name: "사과", price: 3000},
+        {name: "바나나", price: 2500},
+        {name: "오렌지", price: 4000},
+    ];
+
+    // 상품 렌더함수
+    const productUl = document.querySelector(".product-list");
+    const productRender = () => {
+        let myHtml = "";
+
+        // 상품이름 ~원
+        // 수량을 선택할수있는 input(type = number)
+        // 주문버튼
+        let idx = 0;
+        for (let product of products) {
+            myHtml += `
+                <li>
+                    ${product.name} - ${product.price}원
+                    <input type="number" id="qty=${idx}">
+                    <button id="order-${idx}">주문</button>
+                    </li>
+        
+            `;
+            idx++;
+        }
+
+        productUl.innerHTML = myHtml;
+    }
+    productRender();
+
+
+</script>
+</html>
