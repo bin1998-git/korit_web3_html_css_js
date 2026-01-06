@@ -22,27 +22,34 @@
             <div class="cart">장바구니</div>
         </nav>
     </header>
-    <main>
+        <main>
         <!-- 상품카드들이 렌더링(js로) -->
         <section class="product-list"></section>
     </main>
     <div class="modal-overlay hidden">
         <div class="cart-modal">
-            <div class="modal-header"></div>
-            <h2>장바구니</h2>
-            <button class="close-btn">x</button>
-        </div>
-            <ul>
-                <!-- localstorge에 잇는 데이터로 렌더링 -->
+            <div class="modal-header">
+                <h2>장바구니</h2>
+                <button class="close-btn">X</button>
+            </div>
+            <ul class="cart-list">
+                <!-- localStorage에 있는 데이터로 렌더링 -->
             </ul>
             <div class="modal-footer">
-                <button class="close-btn">x</button>
+                <button class="close-btn">닫기</button>
             </div>
-    </div>
+        </div>
+
 </body>
 <script>
     // dom 요소들
     const productList = document.querySelector(".product-list");
+    
+    // 장바구니 관련 dom 요소들
+    const cartButton = document.querySelector(".cart");
+    const modalOverlay = document.querySelector(".modal-overlay");
+    const cartList = document.querySelector(".cart-list");
+    const closeModalBtns = document.querySelectorAll(".close-btn")
 
 
 
@@ -84,15 +91,16 @@
         const { image, title, price, id } = product;
         // 버튼을 누르면, product의 id를 추출할 수 있게
         // 전역에 잇는 ProductList에서 id로 해당 상품을 특정해
-        // localstorage에 담아줄겁니다.
+         // localStorage에 담아줄겁니다.
         const html = `
             <div class="product-card">
                 <div class="image-box">
                     <img src="${image}" alt="${title}" />
-                    </div>    
+                </div>
                 <h3 class="title">${title}</h3>
                 <p class="price">$${price}</p>
                 <button data-productId="${id}">상품담기</button>
+                <button data-product-id="${id}">상품담기</button>
             </div>
         `;
         return html;
@@ -103,62 +111,192 @@
     productList.addEventListener("click", (e) => {
         // 버튼이 아니면 바로 리턴
         const target = e.target;
-        console.log(target);
         const tagName = target.tagName;
         if (tagName !== "BUTTON") {
             return;
         }
-        // 클릭한버튼의 data-productId를 가져와야함
-        let productId = target.dataset.productId
-        productId = parseInt(productId);
 
-        //id로 productDataList에서 상품을 특정해서 가져옴(js객체)
+        const agree = confirm("장바구니에 담으시겠습니까?")
+        if (!agree) {
+            return;
+        }
+
+        // 클릭한버튼의 data-productId를 가져와야함
+        let productId = target.dataset.productId;
+        productId = parseInt(productId); // 문자열 -> 숫자
+        console.log(target.dataset)
+
+        // id로 productDataList에서 상품을 특정해서 가져옴(js객체)
         // let selectedProduct = {};
-        // for (let product of productDataList) {
+        // for(let product of productDataList) {
         //     if(product.id === productId) {
         //         selectedProduct = product;
-        //         break;
+        //         break
         //     }
         // }
 
-       selectedProduct = productDataList.find((product) => {
-        return product.id === productId;
-       });
+        let selectedProduct = productDataList.find((product) => {
+            return product.id === productId;
+        });
 
-       // 최초면, localstorage에 아무것도 없음
-       const savedCart = localStorage.getItem("cart");
+        // 최초면, localStorage에 아무것도 없음
+        const savedCart = localStorage.getItem("cart");
 
-       // 최초면 falsy, 최초가아니면 truthy
-       // 값 ? truthy일때값: falsy일때 값
-       const cart = savedCart ? JSON.parse(savedCart) : [];
+        // 최초면 falsy, 최초가 아니면 truthy
+        // 값 ? truthy일때 값 : falsy일때 값
+        const cart = savedCart ? JSON.parse(savedCart) : [];
 
-       // localstorage에 이미 상품이 존재한다면? 수량증가
-       // 없다면 새로추가 -> cart에 해당 id의 상품이 있는지?
-       const existingItem = cart.find((product) => {
-        return product.id === selectedProduct.id
-       });
+        // localStorage에 이미 상품이 존재한다면? 수량증가
+        // 없다면 새로추가 -> cart에 해당 id의 상품이 있는지?
+        const existingItem = cart.find((product) => {
+            return product.id === selectedProduct.id;
+        });
 
-       if(existingItem) { // cart에 이미 있다면!
-        existingItem.count += 1;
-       } else { //없다면 push
-        const { id, title, price, image } = selectedProduct;
-        const newItem = {
-            id: id,
-            title: title,
-            price: price,
-            image: image,
-            count: 1
+        if(existingItem) { // cart에 이미 있다면
+            existingItem.count += 1;
+        } else { // 없다면 새로 push
+            const {id, title, price, image} = selectedProduct;
+            const newItem = {
+                id: id,
+                title: title,
+                price: price,
+                image: image,
+                count: 1
+            }
+            cart.push(newItem);
         }
-         cart.push(newItem)
-       }
 
-       // 로컬스토리지에 저장
-       const savingData = JSON.stringify(cart);
-       localStorage.setItem("cart", savingData);
+        // 로컬스토리지에 저장
+        const savingData = JSON.stringify(cart);
+        localStorage.setItem("cart", savingData);
     });
+
+    const createCartCardHTML = (item) => {
+        const {image, title, price, id, count} = item;
+        const Html = `
+            <li class="cart-item">
+                <img src="${image}"/>
+                <div class="cart-info">
+                    <p class="title">${title}</p>
+                    <p class="price">$${price}</p>
+                    <div class="quantity">
+                        <button class="minus" data-id="${id}">-</button>
+                        <span>${count}</span>
+                        <button class="plus" data-id="${id}">+</button>
+                    </div>
+                </div>
+                <button class="delete-btn" data-id="${id}">삭제</button>
+            </li>
+        `;
+        return Html;
+    }
+
+    const renderCart = () => {
+        // 로컬스토리지에 있는 데이터기반으로 렌더링
+        let cartData = localStorage.getItem("cart");
+
+        if (!cartData) {
+            cartData = []; // 아무것도 안 담은경우
+        } else {
+            cartData = JSON.parse(cartData);
+        }
+
+        cartList.innerHTML = ""; // 기존 장바구니 목록 초기화
+
+        let myHtml = "";
+        for(let item of cartData) {
+            const itemCardHTML = createCartCardHTML(item);
+            myHtml += itemCardHTML;
+        }
+
+        // 완성 후 html 주입
+        cartList.innerHTML = myHtml;
+    }
+
+    cartButton.addEventListener("click", () => {
+        // 모달을 보이게 - modalOverlay에 있는 hidden 클래스 제거
+        modalOverlay.classList.remove("hidden");
+        
+        // 장바구니 모달안에 그려주세요
+        renderCart();
+    });
+
+    for(let btn of closeModalBtns) {
+        btn.addEventListener("click", () => {
+            // 모달이 사라지게
+            modalOverlay.classList.add("hidden");
+        })
+    }
+
+    // 장바구니 내부 이벤트
+    cartList.addEventListener("click", (e) => {
+        // 1. ul에서 target.dataset.id로 li를 특정
+        // 2. class이름으로 어떤버튼인지 특정
+        const target = e.target;
+        let clickItemId = target.dataset.id;
+        clickItemId = parseInt(clickItemId);
+        // 버튼들만 id를 심어놨음
+        // id가 없다면 바로 리턴
+        if (!clickItemId) {
+            return;
+        }
+        
+        // 로컬스토리지에서 데이터를 가져와서
+        let savedData = localStorage.getItem("cart");
+        if(!savedData) {
+            savedData = [];
+        } else {
+            savedData = JSON.parse(savedData);
+        }
+        // 해당 id의 상품을 특정 - js객체
+        const targetItem = savedData.find((item) => {
+            return item.id === clickItemId;
+        });
+
+        if(!targetItem) {
+            return;
+        }
+
+        // plus클래스 -> 객체.count + 1
+        const isPlus = target.classList.contains("plus");
+        if(isPlus) {
+            targetItem.count += 1;
+        }
+        // minus클래스 -> 객체.count - 1
+        const isMinus = target.classList.contains("minus");
+        // count가 1 아래로 떨어지면 x
+        if(isMinus) {
+            targetItem.count -= 1
+            if(targetItem.count <= 0) {
+                targetItem.count =1;
+            }
+        }
+        // delete-btn -> cart에서 해당객체를 삭제
+        const isDelete = target.classList.contains("delete-btn");
+        if(isDelete) {
+            // 삭제하시겠습니까? confirm()
+            const agree = confirm("삭제하시겠습니까?");
+            if(!agree) {
+                return;
+            }
+            // savedData에서 targetitem의 index를 찾아서
+            let targetIdx = -1;
+            targetIdx = savedData.indexOf(targetItem);
+            // splice로 삭제
+            savedData.splice(targetIdx, 1);
+        }
+        // 로컬스토리지에 다시 저장
+        // js객체 -> JSON string변환
+        const updateData = JSON.stringify(savedData);
+        localStorage.setItem("cart", updateData);
+
+        // 렌더링()
+        renderCart();
+        
+    })
 
     loadProducts();
 
 </script>
-
+  
 </html>
