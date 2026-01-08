@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <h2>게시글 검색</h2>
+        <input type="text" id="titleKeyword" placeholder="제목검색">
+        <input type="text" id="contentKeyword" placeholder="내용검색">
+        <button id="searchBtn">검색</button>
+    </body>
+    <script>
+        const titleKeywordInput = document.querySelector("#titleKeyword");
+        const contentKeywordInput = document.querySelector("#contentKeyword");
+        const searchBtn = document.querySelector("#searchBtn");
+
+        const handleSearchClick = async () => {
+            const titleKeyword = titleKeywordInput.value;
+            const contentKeyword = contentKeywordInput.value;
+
+
+
+            const accessToken = localStorage.getItem("accessToken");
+            if(!accessToken) {
+                alert("로그인 하세요!")
+                return;
+            }
+
+            const endPoint = "http://localhost:8080/post/search";
+            const url = `${endPoint}?titleKeyword=${titleKeyword}&contentKeyword=${contentKeyword}`;
+
+            try {
+                const res = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}` // 엑세스토큰받는 모든 get요청은 이게필요
+                    },
+                    credentials: "include"
+                });
+
+                // 401 인증만료
+                if(res.status === 401) {
+                    // {"error": "UNAUTHORIZED"}
+                    const errorObj = await res.json();
+                    throw new Error(errorObj)
+                }
+
+                if (!res.ok) {
+                    const errorMsg = await res.text();
+                    throw new Error(errorMsg);
+                }
+
+                //[{title:},{content:},{}]
+                const postList =  await res.json();
+                console.log(postList);
+            } catch (error) {
+                // axios 라이브러리에서 refresh 자동 재요청
+                console.log(error);
+            }
+
+        }
+        
+        searchBtn.addEventListener("click",handleSearchClick);
+    </script>
+</html>
